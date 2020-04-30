@@ -1,5 +1,20 @@
 from PIL import Image, ImageDraw, ImageFont
 import sys
+import argparse
+
+
+parser = argparse.ArgumentParser(description = 'Obtain image path, text and optional formatting values')
+
+# Positional arguments that specify the mandatory arguments (may or may not possess default values)
+parser.add_argument('image_path', help = 'Provide the file path to the tempplate you would like to insert')
+parser.add_argument('top_text', help = 'Provide the top text for the meme')
+parser.add_argument('output', nargs = '?', default = 'meme',help = 'Obtain the output file name from the user (default name : meme)')
+
+# Optional arguments that can format the meme to required specifications
+parser.add_argument('--font_size', dest = 'font_size', default = 14, type = int)
+parser.add_argument('--border_size', dest = 'border_size', default = -1, type = int)
+
+args = parser.parse_args()
 
 roboto_fonts = {"light": "fonts/Roboto/Roboto-Light.ttf",
                 "medium": "fonts/Roboto/Roboto-Medium.ttf",
@@ -40,13 +55,14 @@ def add_top_text (image, top_text):
     """
 
     # font size * 4/3 ==? pixels ?
-    font_size = 14
-    font = ImageFont.truetype(roboto_fonts["medium"], size = font_size)
+    font = ImageFont.truetype(roboto_fonts["medium"], size = args.font_size)
 
     wrapped_lines = wrap_text(top_text, font, image.size[0])
     final_text = "\n".join(wrapped_lines)
 
-    border_height = len(wrapped_lines) * font_size * 4 // 3
+    # If the size provided by the user is smaller than the minimum requisite space, we override the user's request and provide the minimum space required
+    border_height = max(len(wrapped_lines) * args.font_size * 4 // 3, args.border_size)
+    
     image = add_top_border(image, border_height)
 
     posn = (0, 0)
@@ -99,6 +115,6 @@ def wrap_text (text, font, base_width):
 # arg2 - top text
 
 if __name__ == "__main__" :
-    image = Image.open(sys.argv[1])
-    image = add_top_text(image, sys.argv[2])
-    image.save('meme.jpg')
+    image = Image.open(args.image_path)
+    image = add_top_text(image, args.top_text)
+    image.save('{}.jpg'.format(args.output))

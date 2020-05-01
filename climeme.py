@@ -11,8 +11,8 @@ parser.add_argument('top_text', help = 'Provide the top text for the meme')
 parser.add_argument('output', nargs = '?', default = 'meme',help = 'Obtain the output file name from the user (default name : meme)')
 
 # Optional arguments that can format the meme to required specifications
-parser.add_argument('--font_size', dest = 'font_size', default = 14, type = int)
-parser.add_argument('--border_size', dest = 'border_size', default = -1, type = int)
+parser.add_argument('--font-size', dest = 'font_size', default = 14, type = int)
+parser.add_argument('--border-size', dest = 'border_size', default = -1, type = int)
 
 args = parser.parse_args()
 
